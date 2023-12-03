@@ -23,15 +23,14 @@ def SolveDayTwo_PartOne(file:str):
 
     # Validate if the game was possible
     valid = {}
-    diceAvailable = {"red":12,"blue":13, "green": 14}
+    diceAvailable = {"red":12,"blue":14, "green": 13}
+    invalidSum = 0
+    totalSum = 0
     for game in games:
         gameValid = True
         for inst in games[game]:
             goodGame = True
             pull = inst.split(", ")
-            if len(pull) > 3:
-                print(inst)
-                exit()
             for play in pull:
                 for dice in diceAvailable:
                     if dice in play:
@@ -42,8 +41,11 @@ def SolveDayTwo_PartOne(file:str):
                 
         if gameValid == True:
             valid[game] = games[game]
-            # print(f"Good Game: {game} {games[game]}")
-            # time.sleep(2)
+        else:
+            gameNum = game.split(" ")
+            invalidSum += int(gameNum[1])
+        gameNum = game.split(" ")
+        totalSum += int(gameNum[1])
 
     sumGames = 0
     
@@ -51,7 +53,7 @@ def SolveDayTwo_PartOne(file:str):
         gameNum = game.split(" ")
         sumGames += int(gameNum[1])
             
-    print(sumGames)
+    print(f"{totalSum}: Valid ({sumGames}) and Invalid ({invalidSum})")
 
 # SolveDayTwo_PartOne("./d2test.txt");
 SolveDayTwo_PartOne("./daytwoinput.txt")
