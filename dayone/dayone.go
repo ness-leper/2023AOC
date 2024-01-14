@@ -4,38 +4,67 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func ReadFile(file string) ([]string, error) {
-  f, err := os.Open(file)
-  var errReturn error
-  if err != nil {
-    errReturn = err
-  }
+	f, err := os.Open(file)
+	var errReturn error
+	if err != nil {
+		errReturn = err
+	}
 
-  defer f.Close()
+	defer f.Close()
 
-  scanner := bufio.NewScanner(f)
+	scanner := bufio.NewScanner(f)
 
-  var lines[] string
-  for scanner.Scan() {
-    lines = append(lines, scanner.Text())
-  }
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
 
-  if err := scanner.Err(); err != nil {
-    errReturn = err
-  }
+	if err := scanner.Err(); err != nil {
+		errReturn = err
+	}
 
-  f.Close()
+	f.Close()
 
-  return lines, errReturn
+	return lines, errReturn
 }
 
-func main(){
-  file, err := ReadFile("puzzle.txt")
-  if err != nil {
-    fmt.Println(err)
-  }
+func Calibrate(value string) (int, error) {
+	var first string
+	var last string
 
-  fmt.Println(file)
+	for i := 0; i < len(value); i++ {
+		temp := string(value[i])
+
+		if _, err := strconv.Atoi(temp); err == nil {
+			if first == "" {
+				first = temp
+			}
+			last = temp
+		}
+	}
+
+	val, err := strconv.Atoi(first + last)
+	return val, err
+}
+
+func main() {
+	file, err := ReadFile("puzzle.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+  var sum int
+	for i := 0; i < len(file); i++ {
+		calibrated, err := Calibrate(file[i])
+		if err != nil {
+			fmt.Println(err)
+		}
+    sum = sum + calibrated
+	}
+
+  fmt.Println(sum)
 }
