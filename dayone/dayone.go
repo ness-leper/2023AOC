@@ -32,7 +32,7 @@ func ReadFile(file string) ([]string, error) {
 	return lines, errReturn
 }
 
-func Calibrate(value string) (int, error) {
+func CalibrateP1(value string) (int, error) {
 	var first string
 	var last string
 
@@ -59,7 +59,7 @@ func main() {
 
   var sum int
 	for i := 0; i < len(file); i++ {
-		calibrated, err := Calibrate(file[i])
+		calibrated, err := CalibrateP1(file[i])
 		if err != nil {
 			fmt.Println(err)
 		}
