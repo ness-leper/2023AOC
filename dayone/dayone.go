@@ -115,7 +115,6 @@ func main() {
 
 	var sum int
 	for i := 0; i < len(file); i++ {
-
 		calibrated, err := CalibrateP2(file[i])
 		if err != nil {
 			fmt.Println(file[i], err)
