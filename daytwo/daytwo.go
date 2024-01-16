@@ -63,22 +63,23 @@ func SolveP1(line string) (int, error) {
 				sumGame[curr[1]] = sumGame[curr[1]] + val
 			}
 		}
-	}
-  // ##################################
+    // ###################
+    // Is there better way than 3 blocks?
+    if sumGame["red"] > game["red"] {
+      valid = false
+    }
 
+    if sumGame["green"] > game["green"] {
+      valid = false
+    }
 
-  // ##################################
-  // There's got to be a better way to do this...
-	if sumGame["red"] > game["red"] {
-		valid = false
-	}
-
-	if sumGame["green"] > game["green"] {
-		valid = false
-	}
-
-	if sumGame["blue"] > game["blue"] {
-		valid = false
+    if sumGame["blue"] > game["blue"] {
+      valid = false
+    }
+    // ###################
+    sumGame["red"] = 0
+    sumGame["green"] = 0
+    sumGame["blue"] = 0
 	}
   // ##################################
 
