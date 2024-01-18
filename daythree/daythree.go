@@ -65,7 +65,9 @@ func SolveP1(file []string) {
         }
         posEnd = ni
 				makeNumber = makeNumber + engine[i][ni]
-			} else {
+			}
+
+      if !re.MatchString(engine[i][ni]) {
 				// TODO:
 				// Need to validate if the found number is good to add.
 				if len(makeNumber) > 0 {
@@ -90,15 +92,22 @@ func SolveP1(file []string) {
               }
             }
           }
-
 					// Check the row+1 cell[x-1...y+1]
-          if i + 1 <= len(engine)-1  && posEnd + 1 <= len(engine[i])-1 && posStart.Position - 1 > -1 {
-            for ch := posStart.Position - 1; ch < posEnd+1; ch++ {
+          fmt.Println(makeNumber, posStart.Position, posEnd)
+          checkPos := 0
+          if posStart.Position - 1 >= 0 {
+            checkPos = posStart.Position
+          }
+          if i + 1 <= len(engine)-1  && posEnd + 1 <= len(engine[i])-1 {
+            fmt.Println(engine[i+1])
+            for ch := checkPos; ch < posEnd+1; ch++ {
+              fmt.Println(ch,found, engine[i+1][ch])
               if engine[i+1][ch] != "." {
                 found = true
               }
             }
           }
+          fmt.Println(found)
 
           if found {
             converted, err := strconv.Atoi(makeNumber)
@@ -120,6 +129,7 @@ func SolveP1(file []string) {
 	// Find each number in the array (0-9)
 	// Check if any of the adjacent cells (master array +/- 1) same array beginning-1/end+1) have a symbol (not .)
   sum := 0
+  fmt.Println(foundNumbers)
   for i := 0; i < len(foundNumbers); i++ {
     sum = sum + foundNumbers[i]
   }
