@@ -40,25 +40,48 @@ func SolveP1(file []string) {
 		for li := 0; li < len(file[i]); li++ {
 			output = append(output, string(file[i][li]))
 		}
-		engine = append(engine, output)
-	}
+		engine = append(engine, output) }
 
 	for i := 0; i < len(engine); i++ {
 		var makeNumber string
-		var foundNumbers []int
+		// var foundNumbers []int
+
+    // Hate this. Need to come up with a better method.
+    posStart := -1
+    posEnd := 0
 		for ni := 0; ni < len(engine[i]); ni++ {
 			re := regexp.MustCompile(`^\d+$`)
 			if re.MatchString(engine[i][ni]) {
+        if posStart < 0 {
+          posStart =  ni
+        }
+        posEnd = ni
 				makeNumber = makeNumber + engine[i][ni]
 			} else {
-        // TODO:
-        // Need to validate if the found number is good to add.
-				fmt.Println(makeNumber)
-        makeNumber = ""
+				// TODO:
+				// Need to validate if the found number is good to add.
+				if len(makeNumber) > 0 {
+					// Check the cell to the left
+          if posStart - 1 >= 0{
+            if engine[i][posStart - 1] != "." {
+              fmt.Println(engine[i])
+              fmt.Println(posStart - 1, "Position Start: ", engine[i][posStart -1])
+            }
+          }
+					// Check the cell to the right
+          if posEnd + 1 <= len(engine[i]) {
+            if engine[i][posEnd + 1] != "." {
+              fmt.Println("Position End:", engine[i][posEnd + 1])
+            }
+          }
+					// Check the row-1 cell[x-1...y+1]
+					// Check the row+1 cell[x-1...y+1]
+					makeNumber = ""
+          posStart = 0
+          posEnd = 0
+				}
 			}
 		}
-		fmt.Println(engine[i])
-		fmt.Println(foundNumbers)
 	}
 
 	// Stored in an array of arrays
