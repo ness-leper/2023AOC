@@ -47,6 +47,7 @@ func SolveP1(file []string) {
 	for i := 0; i < len(engine); i++ {
 		var makeNumber string
 
+    // All this was done. Getting rid of it.
     // Hate this. Need to come up with a better method.
     posStart := struct {
       Found bool
