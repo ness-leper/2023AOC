@@ -33,6 +33,67 @@ func ReadFile(file string) ([]string, error) {
 	return lines, errReturn
 }
 
+func CheckRow(row []string, column int) bool {
+	output := false
+	colStart := -1
+	colEnd := len(row) + 1
+	if column-1 >= 0 {
+		colStart = column - 1
+	}
+	if column+1 <= len(row)-1 {
+		colEnd = len(row) - 1
+	}
+
+	if colStart > -1 && colEnd < len(row) {
+		for i := colStart; i <= colEnd; i++ {
+			check := row[i]
+			re := regexp.MustCompile(`^\d+$`)
+			if !re.MatchString(check) && check != "." {
+				output = true
+			}
+		}
+	}
+
+	return output
+}
+
+func P1Adjacent(engine [][]string, row int, column int) bool {
+	output := false
+
+	// column - 1
+	if column-1 >= 0 {
+		colM1 := engine[row][column-1]
+		re := regexp.MustCompile(`^\d+$`)
+		if !re.MatchString(colM1) && colM1 != "." {
+			output = true
+		}
+	}
+	// column + 1
+	if column+1 >= 0 {
+		colM1 := engine[row][column+1]
+		re := regexp.MustCompile(`^\d+$`)
+		if !re.MatchString(colM1) && colM1 != "." {
+			output = true
+		}
+	}
+
+	// row - 1 [ column - 1 .... column + 1 ]
+	if row-1 >= 0 {
+    if CheckRow(engine[row-1], column) {
+      output = true
+    }
+	}
+
+  // row + 1 [ column - 1 .... column + 1 ]
+  if row + 1 <= len(engine)-1 {
+    if CheckRow(engine[row+1], column) {
+      output = true
+    }
+  }
+
+	return output
+}
+
 func SolveP1(file []string) {
 	// Need to read in each line into a character array
 	var engine [][]string
@@ -41,101 +102,41 @@ func SolveP1(file []string) {
 		for li := 0; li < len(file[i]); li++ {
 			output = append(output, string(file[i][li]))
 		}
-		engine = append(engine, output) }
+		engine = append(engine, output)
+	}
 
-  var foundNumbers []int
+	var foundNumbers []int
 	for i := 0; i < len(engine); i++ {
 		var makeNumber string
-
-    // All this was done. Getting rid of it.
-    // Hate this. Need to come up with a better method.
-    posStart := struct {
-      Found bool
-      Position int
-    }{
-      Found: false,
-      Position: 0,
-    }
-    posEnd := 0
+		enginePart := false
 		for ni := 0; ni < len(engine[i]); ni++ {
 			re := regexp.MustCompile(`^\d+$`)
 			if re.MatchString(engine[i][ni]) {
-        if posStart.Found == false {
-          posStart.Found = true
-          posStart.Position = ni
-        }
-        posEnd = ni
 				makeNumber = makeNumber + engine[i][ni]
+				enginePart = P1Adjacent(engine, i, ni)
 			}
-
-      if !re.MatchString(engine[i][ni]) {
-				// TODO:
-				// Need to validate if the found number is good to add.
-				if len(makeNumber) > 0 {
-					// Check the cell to the left
-          found := false
-          if posStart.Position - 1 >= 0{
-            if engine[i][posStart.Position - 1] != "." {
-              found = true
-            }
-          }
-					// Check the cell to the right
-          if posEnd + 1 <= len(engine[i]) {
-            if engine[i][posEnd + 1] != "." {
-              found = true
-            }
-          }
-					// Check the row-1 cell[x-1...y+1]
-          if i - 1 >= 0  && posStart.Position - 1 >= 0 && posEnd + 1 <= len(engine[i])-1 {
-            for ch := posStart.Position - 1; ch < posEnd+1; ch++ {
-              if engine[i-1][ch] != "." {
-                found = true
-              }
-            }
-          }
-					// Check the row+1 cell[x-1...y+1]
-          fmt.Println(makeNumber, posStart.Position, posEnd)
-          checkPos := 0
-          if posStart.Position - 1 >= 0 {
-            checkPos = posStart.Position
-          }
-          if i + 1 <= len(engine)-1  && posEnd + 1 <= len(engine[i])-1 {
-            fmt.Println(engine[i+1])
-            for ch := checkPos; ch < posEnd+1; ch++ {
-              fmt.Println(ch,found, engine[i+1][ch])
-              if engine[i+1][ch] != "." {
-                found = true
-              }
-            }
-          }
-          fmt.Println(found)
-
-          if found {
-            converted, err := strconv.Atoi(makeNumber)
-            if err == nil {
-              foundNumbers = append(foundNumbers, converted)
-            }
-          }
+			if engine[i][ni] == "." && len(makeNumber) > 0 {
+				if enginePart {
+					converted, err := strconv.Atoi(makeNumber)
+					if err == nil {
+						foundNumbers = append(foundNumbers, converted)
+					}
 					makeNumber = ""
-          posStart.Found = false
-          posStart.Position = 0
-          posEnd = 0
-				} // end of appending the Make Number
-			} // End of the Else
-		} // End of the For loop
-
+				}
+			}
+		}
 	} // end of identification loop
 
 	// Stored in an array of arrays
 	// Find each number in the array (0-9)
 	// Check if any of the adjacent cells (master array +/- 1) same array beginning-1/end+1) have a symbol (not .)
-  sum := 0
-  fmt.Println(foundNumbers)
-  for i := 0; i < len(foundNumbers); i++ {
-    sum = sum + foundNumbers[i]
-  }
+	sum := 0
+	fmt.Println(foundNumbers)
+	for i := 0; i < len(foundNumbers); i++ {
+		sum = sum + foundNumbers[i]
+	}
 
-  fmt.Println(sum)
+	fmt.Println(sum)
 }
 
 func main() {
