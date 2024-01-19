@@ -69,7 +69,7 @@ func P1Adjacent(engine [][]string, row int, column int) bool {
 		}
 	}
 	// column + 1
-	if column+1 >= 0 {
+	if column+1 <= len(engine[row][column])-1 {
 		colM1 := engine[row][column+1]
 		re := regexp.MustCompile(`^\d+$`)
 		if !re.MatchString(colM1) && colM1 != "." {
@@ -79,17 +79,17 @@ func P1Adjacent(engine [][]string, row int, column int) bool {
 
 	// row - 1 [ column - 1 .... column + 1 ]
 	if row-1 >= 0 {
-    if CheckRow(engine[row-1], column) {
-      output = true
-    }
+		if CheckRow(engine[row-1], column) {
+			output = true
+		}
 	}
 
-  // row + 1 [ column - 1 .... column + 1 ]
-  if row + 1 <= len(engine)-1 {
-    if CheckRow(engine[row+1], column) {
-      output = true
-    }
-  }
+	// row + 1 [ column - 1 .... column + 1 ]
+	if row+1 <= len(engine)-1 {
+		if CheckRow(engine[row+1], column) {
+			output = true
+		}
+	}
 
 	return output
 }
@@ -106,14 +106,17 @@ func SolveP1(file []string) {
 	}
 
 	var foundNumbers []int
-	for i := 0; i < len(engine); i++ {
+	// for i := 0; i < len(engine); i++ {
+	for i := 0; i < 1; i++ {
 		var makeNumber string
 		enginePart := false
 		for ni := 0; ni < len(engine[i]); ni++ {
 			re := regexp.MustCompile(`^\d+$`)
 			if re.MatchString(engine[i][ni]) {
 				makeNumber = makeNumber + engine[i][ni]
-				enginePart = P1Adjacent(engine, i, ni)
+				if !enginePart {
+					enginePart = P1Adjacent(engine, i, ni)
+				}
 			}
 			if engine[i][ni] == "." && len(makeNumber) > 0 {
 				if enginePart {
@@ -122,6 +125,7 @@ func SolveP1(file []string) {
 						foundNumbers = append(foundNumbers, converted)
 					}
 					makeNumber = ""
+          enginePart = false
 				}
 			}
 		}
@@ -131,7 +135,6 @@ func SolveP1(file []string) {
 	// Find each number in the array (0-9)
 	// Check if any of the adjacent cells (master array +/- 1) same array beginning-1/end+1) have a symbol (not .)
 	sum := 0
-	fmt.Println(foundNumbers)
 	for i := 0; i < len(foundNumbers); i++ {
 		sum = sum + foundNumbers[i]
 	}
@@ -140,21 +143,10 @@ func SolveP1(file []string) {
 }
 
 func main() {
-	file, err := ReadFile("puzzletest.txt")
+	file, err := ReadFile("puzzle.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	SolveP1(file)
-	// var sum int
-	// for i := 0; i < len(file); i++ {
-	// 	temp, err := SolveP2(file[i])
-	// 	if err != nil {
-	// 		fmt.Println(file[i], err)
-	// 	}
-	// 	sum = sum + temp
-	// }
-
-	// fmt.Println("Final: ", sum)
-
 }
