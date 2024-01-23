@@ -33,25 +33,14 @@ func ReadFile(file string) ([]string, error) {
 	return lines, errReturn
 }
 
-func CheckRow(row []string, column int) bool {
+func CheckCoordinate(engine [][]string, row int, column int) bool {
 	output := false
-	colStart := -1
-	colEnd := len(row) + 1
-	if column-1 >= 0 {
-		colStart = column - 1
-	}
-	if column+1 <= len(row)-1 {
-		colEnd = len(row) - 1
-	}
 
-	if colStart > -1 && colEnd < len(row) {
-		for i := colStart; i <= colEnd; i++ {
-			check := row[i]
-			re := regexp.MustCompile(`^\d+$`)
-			if !re.MatchString(check) && check != "." {
-				output = true
-			}
-		}
+	colM1 := engine[row][column]
+  fmt.Println(colM1)
+	re := regexp.MustCompile(`^\d+$`)
+	if !re.MatchString(colM1) && colM1 != "." {
+		output = true
 	}
 
 	return output
@@ -61,35 +50,43 @@ func P1Adjacent(engine [][]string, row int, column int) bool {
 	output := false
 
 	// column - 1
-	if column-1 >= 0 {
-		colM1 := engine[row][column-1]
-		re := regexp.MustCompile(`^\d+$`)
-		if !re.MatchString(colM1) && colM1 != "." {
-			output = true
-		}
+	if column-1 >= 0 && !output {
+    output = CheckCoordinate(engine, row, column - 1)
 	}
 	// column + 1
-	if column+1 <= len(engine[row][column])-1 {
-		colM1 := engine[row][column+1]
-		re := regexp.MustCompile(`^\d+$`)
-		if !re.MatchString(colM1) && colM1 != "." {
-			output = true
-		}
+	if column+1 <= len(engine[row][column])-1 && !output {
+    output = CheckCoordinate(engine, row, column + 1)
 	}
 
-	// row - 1 [ column - 1 .... column + 1 ]
-	if row-1 >= 0 {
-		if CheckRow(engine[row-1], column) {
-			output = true
-		}
+	// row - 1 [ column - 1 ]
+	if row - 1 >= 0 && !output {
+    output = CheckCoordinate(engine, row - 1, column)
 	}
 
-	// row + 1 [ column - 1 .... column + 1 ]
-	if row+1 <= len(engine)-1 {
-		if CheckRow(engine[row+1], column) {
-			output = true
-		}
+	// row + 1 [ column - 1 ]
+	if row + 1 <= len(engine)-1 && !output {
+    output = CheckCoordinate(engine, row + 1, column)
 	}
+
+	// row - 1 [ column - 1 ]
+	if row-1 >= 0 && column - 1 >= 0 && !output {
+    output = CheckCoordinate(engine, row - 1, column - 1)
+	}
+
+  // row -1 [ column + 1]
+  if row -1 >=0 && (column + 1) < len(engine[row][column]) && !output {
+    output = CheckCoordinate(engine, row -1, column + 1)
+  }
+
+	// row + 1 [ column - 1 ]
+	if row+1 < len(engine) && (column - 1) >= 0 && !output {
+    output = CheckCoordinate(engine, row + 1, column - 1)
+	}
+
+  // row +1 [ column + 1]
+  if row + 1 < len(engine) && (column + 1) < len(engine[row][column]) && !output {
+    output = CheckCoordinate(engine, row + 1, column + 1)
+  }
 
 	return output
 }
@@ -107,7 +104,7 @@ func SolveP1(file []string) {
 
 	var foundNumbers []int
 	// for i := 0; i < len(engine); i++ {
-	for i := 0; i < 1; i++ {
+	for i := 0; i < len(file); i++ {
 		var makeNumber string
 		enginePart := false
 		for ni := 0; ni < len(engine[i]); ni++ {
@@ -119,14 +116,15 @@ func SolveP1(file []string) {
 				}
 			}
 			if engine[i][ni] == "." && len(makeNumber) > 0 {
+				fmt.Println(makeNumber, enginePart)
 				if enginePart {
 					converted, err := strconv.Atoi(makeNumber)
 					if err == nil {
 						foundNumbers = append(foundNumbers, converted)
 					}
-					makeNumber = ""
-          enginePart = false
 				}
+				enginePart = false
+				makeNumber = ""
 			}
 		}
 	} // end of identification loop
@@ -143,7 +141,7 @@ func SolveP1(file []string) {
 }
 
 func main() {
-	file, err := ReadFile("puzzle.txt")
+	file, err := ReadFile("puzzletest.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
