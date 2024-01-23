@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 )
+
+type Part struct {
+  Number string
+  StartAt int
+  EndAt int
+}
 
 func ReadFile(file string) ([]string, error) {
 	f, err := os.Open(file)
@@ -33,32 +38,7 @@ func ReadFile(file string) ([]string, error) {
 	return lines, errReturn
 }
 
-func CheckCoordinate(engine [][]string, row int, column int) bool {
-	output := false
-
-	colM1 := engine[row][column]
-	re := regexp.MustCompile(`^\d+$`)
-	if !re.MatchString(colM1) && colM1 != "." {
-		output = true
-	}
-
-	return output
-}
-
-func P1Adjacent(engine [][]string, row int, column int) bool {
-	output := false
-
-  // Above
-  // Above right
-  // Right
-  // Below
-  // Below Right
-
-	return output
-}
-
-func SolveP1(file []string) {
-	// Need to read in each line into a character array
+func LoadEngine(file []string) [][]string {
 	var engine [][]string
 	for i := 0; i < len(file); i++ {
 		var output []string
@@ -68,42 +48,48 @@ func SolveP1(file []string) {
 		engine = append(engine, output)
 	}
 
-	var foundNumbers []int
-	// for i := 0; i < len(engine); i++ {
-	for i := 0; i < len(file); i++ {
-		var makeNumber string
-		enginePart := false
-		for ni := 0; ni < len(engine[i]); ni++ {
-			re := regexp.MustCompile(`^\d+$`)
-			if re.MatchString(engine[i][ni]) {
-				makeNumber = makeNumber + engine[i][ni]
-				if !enginePart {
-					enginePart = P1Adjacent(engine, i, ni)
-				}
-			}
-			if engine[i][ni] == "." && len(makeNumber) > 0 {
-				fmt.Println(makeNumber, enginePart)
-				if enginePart {
-					converted, err := strconv.Atoi(makeNumber)
-					if err == nil {
-						foundNumbers = append(foundNumbers, converted)
-					}
-				}
-				enginePart = false
-				makeNumber = ""
-			}
-		}
-	} // end of identification loop
+  return engine
+}
 
-	// Stored in an array of arrays
-	// Find each number in the array (0-9)
-	// Check if any of the adjacent cells (master array +/- 1) same array beginning-1/end+1) have a symbol (not .)
-	sum := 0
-	for i := 0; i < len(foundNumbers); i++ {
-		sum = sum + foundNumbers[i]
-	}
+func LocateNumbers(engine []string)  {
+  var foundNumbers []Part
+  newNumber := true 
+  for i := 0; i < len(engine); i++ {
+    var found Part
+    re := regexp.MustCompile(`^\d+$`)
+    if re.MatchString(engine[i]) {
+      found.Number = found.Number + engine[i]
+      if found.StartAt == 0 {
+        found.StartAt = i
+      }
+      found.EndAt = i
+    }
+    if newNumber {
+      newNumber = false
+    }
+    if engine[i] == "." {
+      newNumber = true
+      foundNumbers = append(foundNumbers, found)
+    }
+  }
 
-	fmt.Println(sum)
+  fmt.Println(foundNumbers)
+}
+
+func SolveP1(file []string) {
+	// Need to read in each line into a character array
+  engine := LoadEngine(file)
+
+  // re := regexp.MustCompile(`^\d+$`)
+  // if re.MatchString(engine[i][ni]) {
+  // }
+
+	// var foundNumbers []Part
+
+  for i := 0; i < len(engine); i++ {
+    LocateNumbers(engine[i])
+    // foundNumbers = append(foundNumbers, LocateNumbers(engine[i]))
+  }
 }
 
 func main() {
