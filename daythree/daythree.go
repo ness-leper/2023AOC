@@ -37,7 +37,6 @@ func CheckCoordinate(engine [][]string, row int, column int) bool {
 	output := false
 
 	colM1 := engine[row][column]
-  fmt.Println(colM1)
 	re := regexp.MustCompile(`^\d+$`)
 	if !re.MatchString(colM1) && colM1 != "." {
 		output = true
@@ -49,44 +48,11 @@ func CheckCoordinate(engine [][]string, row int, column int) bool {
 func P1Adjacent(engine [][]string, row int, column int) bool {
 	output := false
 
-	// column - 1
-	if column-1 >= 0 && !output {
-    output = CheckCoordinate(engine, row, column - 1)
-	}
-	// column + 1
-	if column+1 <= len(engine[row][column])-1 && !output {
-    output = CheckCoordinate(engine, row, column + 1)
-	}
-
-	// row - 1 [ column - 1 ]
-	if row - 1 >= 0 && !output {
-    output = CheckCoordinate(engine, row - 1, column)
-	}
-
-	// row + 1 [ column - 1 ]
-	if row + 1 <= len(engine)-1 && !output {
-    output = CheckCoordinate(engine, row + 1, column)
-	}
-
-	// row - 1 [ column - 1 ]
-	if row-1 >= 0 && column - 1 >= 0 && !output {
-    output = CheckCoordinate(engine, row - 1, column - 1)
-	}
-
-  // row -1 [ column + 1]
-  if row -1 >=0 && (column + 1) < len(engine[row][column]) && !output {
-    output = CheckCoordinate(engine, row -1, column + 1)
-  }
-
-	// row + 1 [ column - 1 ]
-	if row+1 < len(engine) && (column - 1) >= 0 && !output {
-    output = CheckCoordinate(engine, row + 1, column - 1)
-	}
-
-  // row +1 [ column + 1]
-  if row + 1 < len(engine) && (column + 1) < len(engine[row][column]) && !output {
-    output = CheckCoordinate(engine, row + 1, column + 1)
-  }
+  // Above
+  // Above right
+  // Right
+  // Below
+  // Below Right
 
 	return output
 }
