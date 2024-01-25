@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
   "readfile"
+  "findnumbers"
 )
 
 
@@ -12,6 +13,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-
-  fmt.Println(file)
+  // find all the numbers in the engine
+  findnumbers.FindNumbers(file)
 }
